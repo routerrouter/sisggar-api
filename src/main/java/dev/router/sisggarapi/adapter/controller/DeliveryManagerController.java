@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/deliveryManager")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class DeliveryManagerController {
@@ -39,12 +41,6 @@ public class DeliveryManagerController {
     private final DeliveryManagerService managerService;
     private final StorageService storageService;
     private final DeliveryManagerMapper mapper;
-
-    public DeliveryManagerController(DeliveryManagerService managerService, StorageService storageService, DeliveryManagerMapper mapper) {
-        this.managerService = managerService;
-        this.storageService = storageService;
-        this.mapper = mapper;
-    }
 
 
     @Operation(summary = "Cadastrar gestor de Entregas", method = "DELETE", tags = {"delivery-manager"})

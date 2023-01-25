@@ -66,7 +66,7 @@ public class SpecificationTemplate {
             @Spec(path = "name", spec = Like.class),
             @Spec(path = "telephone", spec = Like.class)
     })
-    public interface ProviderSpec extends Specification<Provider> {}
+    public interface ProviderSpec extends Specification<Supplier> {}
 
     @And({
             @Spec(path = "userType", spec = Equal.class),

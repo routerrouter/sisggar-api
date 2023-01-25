@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ExistenceService {
-    Existence saveExistence(ExistenceRequest request);
+    Existence updateStock(ExistenceRequest request);
     List<Existence> findAll(UUID storageId);
     void transferBetweenStorage(UUID storageOrigin, ExistenceRequest request);
 }

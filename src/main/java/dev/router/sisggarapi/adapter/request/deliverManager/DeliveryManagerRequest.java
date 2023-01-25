@@ -1,8 +1,6 @@
 package dev.router.sisggarapi.adapter.request.deliverManager;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import dev.router.sisggarapi.adapter.request.costumer.CostumerRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeliveryManagerRequest {
 
     public interface ManagerView {

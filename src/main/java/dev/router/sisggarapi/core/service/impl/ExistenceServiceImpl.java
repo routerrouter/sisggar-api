@@ -1,8 +1,8 @@
 package dev.router.sisggarapi.core.service.impl;
 
 import dev.router.sisggarapi.adapter.mapper.ExistenceMapper;
-import dev.router.sisggarapi.core.domain.Existence;
 import dev.router.sisggarapi.adapter.request.existence.ExistenceRequest;
+import dev.router.sisggarapi.core.domain.Existence;
 import dev.router.sisggarapi.core.domain.enums.MovementType;
 import dev.router.sisggarapi.core.repository.ExistenceRepository;
 import dev.router.sisggarapi.core.repository.StorageRepository;
@@ -13,12 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Log4j2
 @Service
@@ -36,19 +33,25 @@ public class ExistenceServiceImpl implements ExistenceService {
     }
 
     @Override
-    public Existence saveExistence(ExistenceRequest request) {
+    public Existence updateStock(ExistenceRequest request) {
         log.debug("POST saveExistence existenceRequest received {} ", request.toString());
         var existence = new Existence(request);
         Long newQuantity = 0L;
         var otpStorage = storageRepository.findById(request.getStorageId())
                 .orElseThrow(() -> {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Armazem não encontrado!");});
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Armazem não encontrado!");
+                });
         var optExistence = existenceRepository.findExistenceModelByStorageAndProductType(otpStorage, request.getProductType());
         if (optExistence.isPresent()) {
             newQuantity = optExistence.get().updateQuantity(request.getMovementType(), existence.getQuantity());
-            existence.setQuantity(newQuantity);
-            existence.setExistenceId(optExistence.get().getExistenceId());
-            existenceRepository.save(existence);
+            if (verifyQuantity(newQuantity)) {
+                existence.setQuantity(newQuantity);
+                existence.setExistenceId(optExistence.get().getExistenceId());
+                existenceRepository.save(existence);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantidade informada superior a existente!");
+            }
+
         } else {
             existenceRepository.save(existence);
         }
@@ -66,18 +69,8 @@ public class ExistenceServiceImpl implements ExistenceService {
     @Transactional
     @Override
     public void transferBetweenStorage(UUID storageOrigin, ExistenceRequest existence) {
-        // Tipo da garrafa
-        // Quantidade a transferir
-        // Armazem de origem --> OUTPUT
-        // Armazem de destino --> INPUT
-
-        //Salvar movimento de OUTPUT para o armazem de origem
-
-        //Salvar o movimento de INPUT para o armazem de destino
         saveInputTransference(existence);
         saveOutputTransference(storageOrigin, existence);
-
-
     }
 
 
@@ -85,33 +78,17 @@ public class ExistenceServiceImpl implements ExistenceService {
         log.info("Saving output existence for productType {} ", existence.getProductType());
         existence.setStorageId(storageOrigin);
         existence.setMovementType(MovementType.OUTPUT);
-        saveExistence(existence);
-        /*var otpStorage = storageRepository.findById(storageOrigin)
-                .orElseThrow(() -> {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Armazem não encontrado!");});
-        var optExistence = existenceRepository.findExistenceModelByStorageAndProductType(otpStorage, existence.getProductType());
-        if (optExistence.isPresent()) {
-            Long newQuantity = optExistence.get().updateQuantity(MovementType.OUTPUT, existence.getQuantity());
-            existenceRepository.existenceTransfer(storageOrigin, existence.getProductType().toString(), newQuantity);
-        }*/
-
+        updateStock(existence);
     }
 
     public void saveInputTransference(ExistenceRequest existence) {
         log.info("Saving input existence for productType {} ", existence.getProductType());
         existence.setMovementType(MovementType.INPUT);
-        saveExistence(existence);
-        /*var otpStorage = storageRepository.findById(existence.getStorageId())
-                .orElseThrow(() -> {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Armazem não encontrado!");});
-        var optExistence = existenceRepository.findExistenceModelByStorageAndProductType(otpStorage, existence.getProductType());
-        if (optExistence.isPresent()) {
-            Long newQuantity = optExistence.get().updateQuantity(MovementType.INPUT, existence.getQuantity());
-            existenceRepository.existenceTransfer(existence.getStorageId(), existence.getProductType().toString(), newQuantity);
-        } else {
-            saveExistence(existence);
-        }*/
+        updateStock(existence);
+    }
 
+    private boolean verifyQuantity(Long quantity) {
+        return quantity > 0 ? true : false;
     }
 
 }

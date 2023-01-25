@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import dev.router.sisggarapi.core.domain.DeliveryManager;
 import dev.router.sisggarapi.core.domain.Location;
 import dev.router.sisggarapi.core.domain.enums.Status;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
@@ -17,7 +19,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
+@NoArgsConstructor
 public class CostumerRequest {
 
     public interface CostumerView {
