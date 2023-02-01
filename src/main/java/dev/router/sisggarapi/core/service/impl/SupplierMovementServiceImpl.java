@@ -40,7 +40,7 @@ public class SupplierMovementServiceImpl implements SupplierMovementService {
 
     @Transactional
     @Override
-    public SupplierMovement createSupplierMovement(UUID storageId,SupplierMovement supplierMovement) {
+    public SupplierMovement createSupplierMovement(UUID storageId, SupplierMovement supplierMovement, UUID userId) {
         log.debug("POST saveMoviment productMovementModelDto received {} ", supplierMovement.toString());
 
         var storage = storageRepository.findById(storageId)
@@ -49,7 +49,7 @@ public class SupplierMovementServiceImpl implements SupplierMovementService {
 
         supplierMovement.setStatus(Status.ACTIVE);
         supplierMovement.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-        supplierMovement.setUser(userRepository.findById(UUID.fromString("4d49eed9-6963-4975-8f2d-d776ff7a2f1b")).get());// User logged
+        supplierMovement.setUser(userRepository.findById(userId).get());
         supplierMovement.setMovementMonth(supplierMovement.getMovementDate().getMonth());
         supplierMovement = productMovementRepository.save(supplierMovement);
         log.info("Movement save successful movementId {} ", supplierMovement.getSupplierMovementId());

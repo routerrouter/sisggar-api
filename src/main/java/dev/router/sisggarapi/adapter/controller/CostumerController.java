@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -30,15 +31,16 @@ import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/costumer")
+@RequestMapping("/api/costumer")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Costumer", description = "The Costumer API. Contains all the operations that can be performed on a costumer.")
 public class CostumerController {
 
     private final CostumerService costumerService;
     private final CostumerMapper mapper;
 
 
-    @Operation(summary = "Registar Cliente", method = "POST", tags = {"costumer"})
+    @Operation(summary = "Registar Cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo efectuado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -60,7 +62,7 @@ public class CostumerController {
                 .get();
     }
 
-    @Operation(summary = "Actualizar Cliente", method = "PUT", tags = {"costumer"})
+    @Operation(summary = "Actualizar Cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo actualizada com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -81,7 +83,7 @@ public class CostumerController {
 
     }
 
-    @Operation(summary = "Listagem de todos Clientes", method = "GET", tags = {"costumer"})
+    @Operation(summary = "Listagem de todos Clientes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.",
                     content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -110,7 +112,7 @@ public class CostumerController {
 
     }
 
-    @Operation(summary = "Buscar Cliente pelo código", method = "GET", tags = {"costumer"})
+    @Operation(summary = "Buscar Cliente pelo código")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A busca foi bem-sucedida!",
                     content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -126,7 +128,7 @@ public class CostumerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Actualizar limite de Entrega", method = "PATCH", tags = {"costumer"})
+    @Operation(summary = "Actualizar limite de Entrega")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo actualizado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -142,7 +144,7 @@ public class CostumerController {
         return ResponseEntity.status(HttpStatus.OK).body("Limite de entrega actualizado com sucesso!");
     }
 
-    @Operation(summary = "Actualizar Posse", method = "PATCH", tags = {"costumer"})
+    @Operation(summary = "Actualizar Posse")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo actualizado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -157,7 +159,7 @@ public class CostumerController {
         return ResponseEntity.status(HttpStatus.OK).body("Posse de entrega actualizado com sucesso!");
     }
 
-    @Operation(summary = "Deletar/Ativar Cliente", method = "PATCH", tags = {"costumer"})
+    @Operation(summary = "Deletar/Ativar Cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo actualizado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -173,7 +175,7 @@ public class CostumerController {
     }
 
 
-    @Operation(summary = "Desassociar Gerente do Cliente", method = "DELETE", tags = {"costumer"})
+    @Operation(summary = "Desassociar Gerente do Cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Relação eliminada com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -186,7 +188,7 @@ public class CostumerController {
         return ResponseEntity.status(HttpStatus.OK).body("Cliente desvinculado do Gestor");
     }
 
-    @Operation(summary = "Desassociar Localidade do Cliente", method = "DELETE", tags = {"costumer"})
+    @Operation(summary = "Desassociar Localidade do Cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Relação eliminada com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -202,7 +204,7 @@ public class CostumerController {
     }
 
 
-    @Operation(summary = "Associar Cliente a Localidade", method = "POST", tags = {"costumer"})
+    @Operation(summary = "Associar Cliente a Localidade")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo efectuado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -217,7 +219,7 @@ public class CostumerController {
         return ResponseEntity.status(HttpStatus.OK).body("Cliente associado a(s) localidade(s)");
     }
 
-    @Operation(summary = "Associar Gerente ao Cliente", method = "POST", tags = {"costumer"})
+    @Operation(summary = "Associar Gerente ao Cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo efectuado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

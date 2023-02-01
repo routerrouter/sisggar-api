@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -33,8 +34,9 @@ import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/deliveryManager")
+@RequestMapping("/api/deliveryManager")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "DeliveryManager", description = "The Delivery Manager API. Contains all the operations that can be performed on a delivery manager.")
 public class DeliveryManagerController {
 
 
@@ -43,7 +45,7 @@ public class DeliveryManagerController {
     private final DeliveryManagerMapper mapper;
 
 
-    @Operation(summary = "Cadastrar gestor de Entregas", method = "DELETE", tags = {"delivery-manager"})
+    @Operation(summary = "Cadastrar gestor de Entregas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Registo efectuado com sucesso!", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -59,7 +61,7 @@ public class DeliveryManagerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(managerResponse.get());
     }
 
-    @Operation(summary = "Actualizar dados do gestor de Entregas", method = "DELETE", tags = {"delivery-manager"})
+    @Operation(summary = "Actualizar dados do gestor de Entregas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo alterado com sucesso!", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -80,7 +82,7 @@ public class DeliveryManagerController {
                 .get();
     }
 
-    @Operation(summary = "Listar Gestores", method = "GET", tags = {"delivery-manager"})
+    @Operation(summary = "Listar Gestores")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -106,7 +108,7 @@ public class DeliveryManagerController {
 
     }
 
-    @Operation(summary = "Pesquisar gestor pelo ID", method = "DELETE", tags = {"delivery-manager"})
+    @Operation(summary = "Pesquisar gestor pelo ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -119,7 +121,7 @@ public class DeliveryManagerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Desativar/Excluir gestor de Entregas", method = "DELETE", tags = {"delivery-manager"})
+    @Operation(summary = "Desativar/Excluir gestor de Entregas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = DeliveryManagerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

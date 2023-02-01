@@ -1,29 +1,32 @@
-package dev.router.sisggarapi.adapter.dto.authentication;
+package dev.router.sisggarapi.adapter.request.authentication;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import dev.router.sisggarapi.core.domain.enums.UserType;
 import dev.router.sisggarapi.adapter.validation.UsernameConstraint;
-import lombok.Data;
+import dev.router.sisggarapi.core.domain.enums.RoleType;
+import dev.router.sisggarapi.core.domain.enums.UserType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.UUID;
 
-@Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDto {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRequest {
+
     public interface UserView {
         public static interface RegistrationPost {}
         public static interface UserPut {}
         public static interface PasswordPut {}
         public static interface ImagePut {}
     }
-
-    @JsonView({UserView.UserPut.class,UserView.PasswordPut.class,UserView.ImagePut.class})
-    private UUID userId;
 
     @NotBlank(groups = UserView.RegistrationPost.class)
     @Size(min = 4, max = 50, groups = UserView.RegistrationPost.class)
@@ -58,5 +61,8 @@ public class UserDto {
 
     @JsonView({UserView.RegistrationPost.class})
     private UserType userType;
+
+    @JsonView({UserView.RegistrationPost.class})
+    private RoleType roleType;
 
 }

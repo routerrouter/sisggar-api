@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -29,14 +30,15 @@ import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/storage")
+@RequestMapping("/api/storage")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Storage", description = "The Storage API. Contains all the operations that can be performed on a storage.")
 public class StorageController {
 
     private final StorageService storageService;
     private final StorageMapper mapper;
 
-    @Operation(summary = "Registar Armazem", method = "POST", tags = {"storages"})
+    @Operation(summary = "Registar Armazem")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo efectuado com sucesso!", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -51,8 +53,7 @@ public class StorageController {
     }
 
 
-    @Operation(summary = "Actualizar dados do Armazem", description = "Actualização dos dados registados de um armazem de garrafas", method = "PUT", tags = {
-            "storages"})
+    @Operation(summary = "Actualizar dados do Armazem", description = "Actualização dos dados registados de um armazem de garrafas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados actualizados com sucesso!", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -72,8 +73,7 @@ public class StorageController {
                 .get();
     }
 
-    @Operation(summary = "Eliminar armazem", description = "Eliminar dados de registo de um armazem", method = "DELETE", tags = {
-            "storages"})
+    @Operation(summary = "Eliminar armazem", description = "Eliminar dados de registo de um armazem")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Armazem eliminado com sucesso!", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -86,7 +86,7 @@ public class StorageController {
     }
 
 
-    @Operation(summary = "Buscar todos os Armazens", method = "GET", tags = {"storages"})
+    @Operation(summary = "Buscar todos os Armazens")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A busca foi bem-sucedida", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "404", description = "Recurso do armazem não encontrado", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -109,7 +109,7 @@ public class StorageController {
 
     }
 
-    @Operation(summary = "Buscar Armazem pelo código",  method = "GET", tags = {"storages"})
+    @Operation(summary = "Buscar Armazem pelo código")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A busca foi bem-sucedida!", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = StorageRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

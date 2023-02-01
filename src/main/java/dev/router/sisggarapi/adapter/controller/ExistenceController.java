@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,14 +24,15 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/existence")
+@RequestMapping("/api/existence")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Existence", description = "The UseExistencer API. Contains all the operations that can be performed on a existence.")
 public class ExistenceController {
 
     private final ExistenceService existenceService;
     private final ExistenceMapper mapper;
 
-    @Operation(summary = "Existência no Estoque", method = "GET", tags = {"existence"})
+    @Operation(summary = "Existência no Estoque")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -44,7 +46,7 @@ public class ExistenceController {
         return ResponseEntity.status(HttpStatus.OK).body(existenceResponses);
     }
 
-    @Operation(summary = "Transferencia de estoque", method = "GET", tags = {"existence"})
+    @Operation(summary = "Transferencia de estoque")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operação efetuada com sucesso!.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

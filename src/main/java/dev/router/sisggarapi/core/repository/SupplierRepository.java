@@ -14,7 +14,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, UUID>, JpaSp
     Optional<Supplier> findByName(@Param("name") String name);
     Optional<Supplier> findByNif(@Param("nif") String nif);
 
-    @Query(value = "select * from tb_provider p where  LOWER(p.name) like LOWER(CONCAT('%',:name,'%')) " +
+    @Query(value = "select * from tb_supplier p where  LOWER(p.name) like LOWER(CONCAT('%',:name,'%')) " +
             "AND p.telephone like CONCAT('%',:telephone,'%') " +
             "AND p.nif like CONCAT('%',:nif,'%')",nativeQuery = true)
     List<Supplier> findAll(@Param("name") String name,

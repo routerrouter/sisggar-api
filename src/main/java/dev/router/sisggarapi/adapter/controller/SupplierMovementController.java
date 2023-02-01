@@ -1,6 +1,7 @@
 package dev.router.sisggarapi.adapter.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import dev.router.sisggarapi.adapter.config.secutity.UserDetailsImpl;
 import dev.router.sisggarapi.adapter.mapper.SupplierMovementMapper;
 import dev.router.sisggarapi.adapter.request.supplierMovement.MovementFindRequest;
 import dev.router.sisggarapi.adapter.request.supplierMovement.SupplierMovementRequest;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,14 +37,15 @@ import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/suppliermovement")
+@RequestMapping("/api/suppliermovement")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "SupplierMovement", description = "The Supplier Movement API. Contains all the operations that can be performed on a movement.")
 public class SupplierMovementController {
 
     private final SupplierMovementService supplierMovementService;
     private final SupplierMovementMapper mapper;
 
-    @Operation(summary = "Salvar movimentos de entrada e saidas do fornecedor", method = "POST", tags = {"supplierMovements"})
+    @Operation(summary = "Salvar movimentos de entrada e saidas do fornecedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo efectuado com sucesso!",
                     content = @Content(schema = @Schema(implementation = SupplierMovementRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -51,17 +56,19 @@ public class SupplierMovementController {
     public ResponseEntity<SupplierMovementResponse> saveMovement(@RequestParam() UUID storageId,
                                                                  @RequestBody
                                                                  @Valid @JsonView(SupplierMovementRequest.SupplierMovementView.RegistrationPost.class)
-                                                                         SupplierMovementRequest request) {
+                                                                         SupplierMovementRequest request,
+                                                                 Authentication authentication) {
 
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Optional<SupplierMovementResponse> response = Stream.of(request)
                 .map(mapper::toSupplierMovement)
-                .map(movement -> supplierMovementService.createSupplierMovement(storageId, movement))
+                .map(movement -> supplierMovementService.createSupplierMovement(storageId, movement, userDetails.getUserId()))
                 .map(mapper::toSupplierMovementResponse)
                 .findFirst();
         return ResponseEntity.status(HttpStatus.CREATED).body(response.get());
     }
 
-    @Operation(summary = "Listar movimentos de entrada e saidas de garrafas", method = "POST", tags = {"supplierMovements"})
+    @Operation(summary = "Listar movimentos de entrada e saidas de garrafas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = SupplierMovementRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = SupplierMovementRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -85,7 +92,7 @@ public class SupplierMovementController {
     }
 
 
-    @Operation(summary = "Eliminar movimento", method = "PATCH", tags = {"supplierMovements"})
+    @Operation(summary = "Eliminar movimento")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registo efectuado com sucesso!",
                     content = @Content(schema = @Schema(implementation = SupplierMovementRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

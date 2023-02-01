@@ -14,5 +14,5 @@ public interface LocationService {
     Optional<Location> findById(UUID locationId);
     Optional<Location> findByDescription(String description);
     //Page<Location> getLocationsIntoStorage(Specification<Location> spec, Pageable pageable);
-    Page<Location> getLocationsIntoStorage(Pageable pageable);
+    Page<Location> getLocationsIntoStorage(UUID storageId,String description,Pageable pageable);
 }

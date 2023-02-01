@@ -7,6 +7,7 @@ import dev.router.sisggarapi.core.service.LocationService;
 import dev.router.sisggarapi.core.service.StorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -26,8 +27,9 @@ import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/location")
+@RequestMapping("/api/location")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Location", description = "The Location API. Contains all the operations that can be performed on a location.")
 public class LocationController {
 
 
@@ -36,22 +38,22 @@ public class LocationController {
     private final LocationMapper mapper;
 
 
-    @Operation(summary = "Desativar Localidade", method = "DELETE", tags = {"location"})
+    @Operation(summary = "Desativar Localidade")
     @DeleteMapping("/{locationId}")
     public ResponseEntity<Object> deleteStorage(@PathVariable(value = "locationId") UUID locationId) {
         locationService.delete(locationId);
         return ResponseEntity.status(HttpStatus.OK).body("Localização eliminada com sucesso!");
     }
 
-    @Operation(summary = "Buscar localidades de um Armazem", method = "GET", tags = {"location"})
+    @Operation(summary = "Buscar localidades de um Armazem")
     @GetMapping("/storage/{storageId}/locations")
     public ResponseEntity<Page<LocationResponse>> getLocationsIntoStorage(@Parameter(description = "ID do armazem passado")
                                                                               @PathVariable UUID storageId,
-                                                                          //SpecificationTemplate.LocationSpec spec,
+                                                                          @RequestParam(value = "description",required = false) String description,
                                                                           @ParameterObject
                                                                           @PageableDefault(page = 0, size = 10, sort = "locationId", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        List<LocationResponse> responseList = locationService.getLocationsIntoStorage(pageable)
+        List<LocationResponse> responseList = locationService.getLocationsIntoStorage(storageId,description, pageable)
                 .stream()
                 .map(mapper::toLocationResponse)
                 .collect(Collectors.toList());
@@ -66,7 +68,7 @@ public class LocationController {
 
     }
 
-    @Operation(summary = "Buscar localidade pelo ID", method = "GET", tags = {"location"})
+    @Operation(summary = "Buscar localidade pelo ID")
     @GetMapping("/{locationId}")
     public ResponseEntity<LocationResponse> getLocation(
             @Parameter(description = "ID da localidade a pesquisar")
@@ -78,7 +80,7 @@ public class LocationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Criar nova Localidade", method = "POST", tags = {"location"})
+    @Operation(summary = "Criar nova Localidade")
     @PostMapping()
     public ResponseEntity<LocationResponse> createLocation(@Valid @RequestBody LocationRequest request) {
 
@@ -90,14 +92,14 @@ public class LocationController {
                 .findFirst().get();
     }
 
-    @Operation(summary = "Alterar Localidade", method = "PUT", tags = {"location"})
+    @Operation(summary = "Alterar Localidade")
     @PutMapping("/{locationId}")
     public ResponseEntity<LocationResponse> updateLocation(@PathVariable(value = "locationId") UUID locationId,
-                                                 @RequestBody @Valid LocationRequest request) {
+                                                           @RequestBody @Valid LocationRequest request) {
 
         return Stream.of(request)
                 .map(mapper::toLocation)
-                .map(location -> locationService.updateLocation(location,locationId))
+                .map(location -> locationService.updateLocation(location, locationId))
                 .map(mapper::toLocationResponse)
                 .map(locationResponse -> ResponseEntity.status(HttpStatus.OK).body(locationResponse))
                 .findFirst()

@@ -92,8 +92,8 @@ public class LocationServiceImpl implements LocationService {
 
 
     @Override
-    public Page<Location> getLocationsIntoStorage(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Location> getLocationsIntoStorage(UUID storageId,String description, Pageable pageable) {
+        return repository.findAll(storageId,description, pageable);
     }
 
     private void storageExist(Location location) {

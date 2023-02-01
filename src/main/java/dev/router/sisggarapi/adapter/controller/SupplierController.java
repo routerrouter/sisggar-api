@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -32,14 +33,15 @@ import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Supplier")
+@RequestMapping("/api/supplier")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Supplier", description = "The Supplier API. Contains all the operations that can be performed on a supplier.")
 public class SupplierController {
 
     private final SupplierService supplierService;
     private final SupplierMapper mapper;
 
-    @Operation(summary = "Cadastrar Fornecedor ", method = "POST", tags = {"supplier"})
+    @Operation(summary = "Cadastrar Fornecedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Registo efectuado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -58,7 +60,7 @@ public class SupplierController {
                 .get();
     }
 
-    @Operation(summary = "Actualizar Fornecedor", method = "PUT", tags = {"supplier"})
+    @Operation(summary = "Actualizar Fornecedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados actualizados com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -79,7 +81,7 @@ public class SupplierController {
                 .get();
     }
 
-    @Operation(summary = "Lista de Fornecedores", method = "GET", tags = {"supplier"})
+    @Operation(summary = "Lista de Fornecedores")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -103,13 +105,13 @@ public class SupplierController {
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseList);
     }
 
-    @Operation(summary = "Busca pelo ID", method = "GET", tags = {"supplier"})
+    @Operation(summary = "Busca pelo ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = SupplierRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "403", description = "Não tem permissão para acessar este recurso", content = @Content(schema = @Schema(implementation = SupplierRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "Exceção do Servidor", content = @Content(schema = @Schema(implementation = SupplierRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
-    @GetMapping("/{SupplierId}")
+    @GetMapping("/{supplierId}")
     public ResponseEntity<SupplierResponse> getOneSupplier(@PathVariable(value = "supplierId") UUID supplierId) {
         return supplierService.findById(supplierId)
                 .map(mapper::toSupplierResponse)
@@ -117,7 +119,7 @@ public class SupplierController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Actualizar Status", method = "PATCH", tags = {"supplier"})
+    @Operation(summary = "Actualizar Status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Status actualizado com sucesso!", content = @Content(schema = @Schema(implementation = CostumerRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Erro na requisição! Verifique as informações enviadas.", content = @Content(schema = @Schema(implementation = SupplierRequest.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

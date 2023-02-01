@@ -1,4 +1,4 @@
-package dev.router.sisggarapi.adapter.dto.authentication;
+package dev.router.sisggarapi.adapter.request.authentication;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class JwtDto {
+public class JwtRequest {
 
     @NonNull
     private String token;

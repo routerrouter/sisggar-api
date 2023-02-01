@@ -1,8 +1,9 @@
 package dev.router.sisggarapi.core.service.impl;
 
+import dev.router.sisggarapi.adapter.mapper.UserMapper;
 import dev.router.sisggarapi.core.domain.Role;
 import dev.router.sisggarapi.core.domain.User;
-import dev.router.sisggarapi.adapter.dto.authentication.UserDto;
+import dev.router.sisggarapi.adapter.request.authentication.UserRequest;
 import dev.router.sisggarapi.core.domain.enums.RoleType;
 import dev.router.sisggarapi.core.domain.enums.Status;
 import dev.router.sisggarapi.core.domain.enums.UserType;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,6 +36,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    UserMapper mapper;
 
 
     @Override
@@ -63,33 +71,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto saveUser(UserDto userDto) {
+    public User saveUser(UserRequest userRequest) {
 
-        log.debug("POST registerUser userDto received {} ", userDto.toString());
-        if(userRepository.existsByUsername(userDto.getUsername())){
-            log.warn("Username {} is Already Taken ", userDto.getUsername());
+        log.debug("POST registerUser userDto received {} ", userRequest.toString());
+        if(userRepository.existsByUsername(userRequest.getUsername())){
+            log.warn("Username {} is Already Taken ", userRequest.getUsername());
             new ResponseStatusException(HttpStatus.CONFLICT,"Error: Username is Already Taken!");
         }
-        if(userRepository.existsByEmail(userDto.getEmail())){
-            log.warn("Email {} is Already Taken ", userDto.getEmail());
+        if(userRepository.existsByEmail(userRequest.getEmail())){
+            log.warn("Email {} is Already Taken ", userRequest.getEmail());
             new ResponseStatusException(HttpStatus.CONFLICT,"Error: Email is Already Taken!");
         }
-        Role role = roleRepository.findByRoleName(RoleType.ROLE_ADMIN)
+        Role role = roleRepository.findByRoleName(userRequest.getRoleType())
                 .orElseThrow(() -> new RuntimeException("Error: Role is Not Found."));
-
-        userDto.setPassword(userDto.getPassword());
-        var userModel = new User();
-        BeanUtils.copyProperties(userDto, userModel);
-        userModel.setUserStatus(Status.ACTIVE);
-        userModel.setUserType(UserType.ADMIN);
-        userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        userModel.getRoles().add(role);
-        userRepository.save(userModel);
-        log.debug("POST registerUser userId saved {} ", userModel.getUserId());
-        log.info("User saved successfully userId {} ", userModel.getUserId());
-        BeanUtils.copyProperties(userModel,userDto);
-        return  userDto;
+        var user = mapper.toUser(userRequest);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setUserStatus(Status.ACTIVE);
+        user.setUserType(user.getUserType());
+        user.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
+        user.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        user.getRoles().add(role);
+        userRepository.save(user);
+        log.debug("POST registerUser userId saved {} ", user.getUserId());
+        log.info("User saved successfully userId {} ", user.getUserId());
+        return user;
     }
 
     @Override
@@ -101,40 +106,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        var userModel = userRepository.findById(userDto.getUserId())
+    public User updateUser(User userRequest) {
+        var userModel = userRepository.findById(userRequest.getUserId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found."));
-        BeanUtils.copyProperties(userDto,userModel);
+        BeanUtils.copyProperties(userRequest,userModel);
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel = userRepository.save(userModel);
-        BeanUtils.copyProperties(userModel,userDto);
-        return  userDto;
+        BeanUtils.copyProperties(userModel, userRequest);
+        return userRequest;
     }
 
     @Override
-    public void updatePassword(UserDto userDto) {
-        var userModelOptional = userRepository.findById(userDto.getUserId());
-        if(!userModelOptional.isPresent()){
+    public void updatePassword(UUID userId,UserRequest userRequest) {
+        var optUser = userRepository.findById(userId);
+        if(!optUser.isPresent()){
             new ResponseStatusException(HttpStatus.CONFLICT,"User not found");
-        } if(!userModelOptional.get().getPassword().equals(userDto.getOldPassword())){
+        } if(!optUser.get().getPassword().equals(userRequest.getOldPassword())){
             new ResponseStatusException(HttpStatus.CONFLICT,"Error: Mismatched old password!");
         } else {
-            var userModel = userModelOptional.get();
-            userModel.setPassword(userDto.getPassword());
-            userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userRepository.save(userModel);
+            var user = optUser.get();
+            user.setPassword(userRequest.getPassword());
+            user.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+            userRepository.save(user);
         }
     }
 
     @Override
-    public UserDto updateImage(UserDto userDto) {
-        var userModel = userRepository.findById(userDto.getUserId())
+    public User updateImage(User userRequest) {
+        var userModel = userRepository.findById(userRequest.getUserId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.CONFLICT,"User not found") );
 
-        userModel.setImageUrl(userDto.getImageUrl());
+        userModel.setImageUrl(userRequest.getImageUrl());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel = userRepository.save(userModel);
-        BeanUtils.copyProperties(userModel,userDto);
-        return userDto;
+        BeanUtils.copyProperties(userModel, userRequest);
+        return userRequest;
     }
 }
